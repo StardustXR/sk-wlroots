@@ -1,0 +1,3 @@
+[submodule "subprojects/StereoKit"]
+	path = subprojects/StereoKit
+	url = https://github.com/maluoi/StereoKit.git
