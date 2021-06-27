@@ -15,6 +15,11 @@ add_project_arguments([
 
 wlroots_proj = subproject('wlroots')
 wlroots = wlroots_proj.get_variable('wlroots')
+wlroots_server_protocols = wlroots_proj.get_variable('protocols_server_header')
+
+server_protocols = [
+	wlroots_server_protocols['xdg-shell']
+]
 
 src_includes = include_directories('src')
 includes = [src_includes]
@@ -23,7 +28,10 @@ subdir('src')
 
 executable(
 	'sk-wlroots',
-	'src/main.cpp',
+	[
+		'src/main.cpp',
+		server_protocols,
+	],
 	include_directories: includes,
 	dependencies: [
 		stereokit,

@@ -7,6 +7,7 @@ extern "C" {
 #include "wlr/render/gles2.h"
 #undef static
 #include <wlr/types/wlr_compositor.h>
+#include <wlr/types/wlr_xdg_shell.h>
 }
 
 using namespace sk;
@@ -39,6 +40,8 @@ int main() {
 	compositor.renderer = wlr_gles2_renderer_create(egl);
 
 	compositor.compositor = wlr_compositor_create(compositor.wl_display, compositor.renderer);
+
+	wlr_xdg_shell_create(compositor.wl_display);
 
 	while (sk_step([]() {
 	}));
