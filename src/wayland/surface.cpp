@@ -39,10 +39,11 @@ bool Surface::updateSurface() {
 	if(!surfaceBuffer)
 		return false;
 	struct wlr_texture *surfaceTexture = surfaceBuffer->texture;
-	struct wlr_gles2_texture *surfaceTextureGLES = (wlr_gles2_texture *) surfaceTexture;
-	assert(surfaceTextureGLES);
 
-	tex_set_surface(this->surfaceTex, surfaceTextureGLES->image, sk::tex_type_image_nomips, surfaceTextureGLES->drm_format, surfaceTexture->width, surfaceTexture->height, 1);
+	struct wlr_gles2_texture_attribs surfaceTextureAttributes;
+	wlr_gles2_texture_get_attribs(surfaceTexture, &surfaceTextureAttributes);
+
+	tex_set_surface(this->surfaceTex, (void *) surfaceTextureAttributes.tex, sk::tex_type_image_nomips, GL_RGBA, surfaceTexture->width, surfaceTexture->height, 1);
 	material_set_texture(this->surfaceMat, "diffuse", this->surfaceTex);
 	// const size_t texSize = surfaceTexture->width*surfaceTexture->width*4;
 	// void *texData = nullptr;
