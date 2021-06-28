@@ -1,29 +1,15 @@
 #include "stereokit.h"
-#include <wayland-server.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 
-extern "C" {
-#include "wlr/render/egl.h"
-#define static
-#include "wlr/render/gles2.h"
-#undef static
-#include <wlr/types/wlr_compositor.h>
-#include <wlr/types/wlr_xdg_shell.h>
-}
-
-using namespace sk;
-
-typedef struct {
-	struct wl_display *wl_display;
-	struct wl_event_loop *wl_event_loop;
-
-	struct wlr_renderer *renderer;
-	struct wlr_compositor *compositor;
-} wlroots_compositor;
-
-wlroots_compositor compositor;
+#include "wayland/wayland.hpp"
 
 extern EGLDisplay egl_display;
 extern EGLContext egl_context;
+
+Wayland *wayland;
+
+using namespace sk;
 
 int main() {
 	sk_settings_t sk_settings = {};
@@ -33,17 +19,12 @@ int main() {
 	if (!sk_init(sk_settings))
 		return 1;
 
-	compositor.wl_display = wl_display_create();
-	compositor.wl_event_loop = wl_display_get_event_loop(compositor.wl_display);
+	wayland = new Wayland(egl_display, egl_context, EGL_PLATFORM_GBM_KHR);
 
-	struct wlr_egl *egl = wlr_egl_from_context(egl_display, egl_context, EGL_PLATFORM_GBM_KHR);
-	compositor.renderer = wlr_gles2_renderer_create(egl);
-
-	compositor.compositor = wlr_compositor_create(compositor.wl_display, compositor.renderer);
-
-	wlr_xdg_shell_create(compositor.wl_display);
+	// wl_signal_add(&compositor.xdg_shell->events.new_surface, &compositor.xdg_shell_new_surface);
 
 	while (sk_step([]() {
+		wayland->update();
 	}));
 
 	return 0;

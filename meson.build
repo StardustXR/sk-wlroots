@@ -24,19 +24,20 @@ server_protocols = [
 src_includes = include_directories('src')
 includes = [src_includes]
 
+source_files = files('src/main.cpp')
+
 subdir('src')
+
+source_files += server_protocols
 
 executable(
 	'sk-wlroots',
-	[
-		'src/main.cpp',
-		server_protocols,
-	],
+	source_files,
 	include_directories: includes,
 	dependencies: [
 		stereokit,
 # After here are all the internal dependencies
-		wayland,
+		# wayland,
 		wlroots,
 	],
 )
