@@ -23,7 +23,7 @@ extern "C" {
 
 using namespace sk;
 
-Surface::Surface(struct wlr_renderer *renderer, struct wlr_surface *surface) {
+Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
 	this->renderer = renderer;
 	this->surface = surface;
 
@@ -53,18 +53,18 @@ Surface::Surface(struct wlr_renderer *renderer, struct wlr_surface *surface) {
 Surface::~Surface() {}
 
 void Surface::onMapped() {
-	struct wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
+	wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
 	mesh_release(this->surfaceMesh);
 	this->surfaceMesh = mesh_gen_plane(vec2{((float) surfaceTexture->width)/DENSITY, ((float) surfaceTexture->height)/DENSITY}, -vec3_forward, vec3_up);
 }
 
 void Surface::onCommit() {
-	struct wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
+	wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
 	if(!surfaceTexture || !wlr_texture_is_gles2(surfaceTexture)) {
 		printf("Surface texture does not exist or is not GLES2\n");
 		return;
 	}
-	struct wlr_gles2_texture *eglTexture = (struct wlr_gles2_texture *) surfaceTexture;
+	wlr_gles2_texture *eglTexture = (wlr_gles2_texture *) surfaceTexture;
 
 	this->surfaceTex->tex.width       = surfaceTexture->width;
 	this->surfaceTex->tex.height      = surfaceTexture->height;
@@ -78,7 +78,7 @@ void Surface::draw() {
 		return;
 	render_add_mesh(this->surfaceMesh, this->surfaceMat, matrix_trs(vec3_forward * 0.5f));
 
-	struct timespec now;
+	timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	wlr_surface_send_frame_done(surface, &now);
 }

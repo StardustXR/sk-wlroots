@@ -24,14 +24,14 @@ public:
 	void onNewXDGSurface(void *data);
 
 protected:
-	struct wl_display *wl_display;
-	struct wl_event_loop *wl_event_loop;
+	wl_display *wayland_display;
+	wl_event_loop *event_loop;
 
-	struct wlr_egl *egl;
-	struct wlr_renderer *renderer;
-	struct wlr_compositor *compositor;
+	wlr_egl *egl;
+	wlr_renderer *renderer;
+	wlr_compositor *compositor;
 
-	struct wlr_xdg_shell *xdg_shell;
+	wlr_xdg_shell *xdg_shell;
 	WaylandCallback newSurfaceCallbackXDG;
 
 	std::vector<XDGSurface> xdgSurfaces;

@@ -7,7 +7,7 @@ extern "C" {
 
 class Surface {
 public:
-    explicit Surface(struct wlr_renderer *renderer, struct wlr_surface *surface);
+    explicit Surface(wlr_renderer *renderer, wlr_surface *surface);
 	~Surface();
 
 	void onMapped();
@@ -22,8 +22,8 @@ protected:
 	WaylandCallback surfaceMappedCallback;
 	WaylandCallback surfaceCommitCallback;
 
-    struct wlr_renderer *renderer;
-	struct wlr_surface *surface;
+    wlr_renderer *renderer;
+	wlr_surface *surface;
 
 	bool updateSurface();
 
