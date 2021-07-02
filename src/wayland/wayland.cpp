@@ -1,6 +1,11 @@
 #include "wayland.hpp"
 #include "callbacks.h"
 #include "assert.h"
+#include <EGL/eglext.h>
+
+extern "C" {
+	#include "wlr/types/wlr_data_device.h"
+}
 
 Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 	wl_display = wl_display_create();
@@ -14,8 +19,8 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 	printf("Running compositor on wayland display '%s'\n", socket);
 	setenv("WAYLAND_DISPLAY", socket, true);
 	
-	wl_display_init_shm(wl_display);
-	egl = wlr_egl_from_context(display, context, EGL_PLATFORM_GBM_KHR);
+	// wl_display_init_shm(wl_display);
+	egl = wlr_egl_from_context(display, context);
 	assert(egl);
 
 	renderer = wlr_gles2_renderer_create(egl);
@@ -24,10 +29,11 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 
 	compositor = wlr_compositor_create(wl_display, renderer);
 	assert(compositor);
+	// wlr_data_device_manager_create(wl_display);
 	xdg_shell = wlr_xdg_shell_create(wl_display);
 	assert(xdg_shell);
 
-	newSurfaceCallbackXDG.callback = std::bind(&Wayland::newSurface, this, std::placeholders::_1);
+	newSurfaceCallbackXDG.callback = std::bind(&Wayland::onNewXDGSurface, this, std::placeholders::_1);
 	wl_signal_add(&xdg_shell->events.new_surface, &newSurfaceCallbackXDG.listener);
 }
 
@@ -39,15 +45,15 @@ void Wayland::update() {
 	wl_display_flush_clients(wl_display);
 	wl_event_loop_dispatch(wl_event_loop, 1);
 
-	for(Surface &surface : surfaces) {
+	for(XDGSurface &surface : xdgSurfaces) {
 		surface.draw();
 	}
 }
 
-void Wayland::newSurface(struct wlr_xdg_surface *surface) {
+void Wayland::onNewXDGSurface(struct wlr_xdg_surface *surface) {
 	printf("test %s\n", __PRETTY_FUNCTION__);
 
-	surfaces.emplace_back(egl, surface->surface);
+    xdgSurfaces.emplace_back(renderer, surface);
 	// if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
 		// return;
 }

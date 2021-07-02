@@ -12,7 +12,7 @@ extern "C" {
 #include <vector>
 
 #include "callbacks.h"
-#include "surface.hpp"
+#include "xdgsurface.hpp"
 
 class Wayland {
 public:
@@ -21,7 +21,7 @@ public:
 
 	void update();
 
-	void newSurface(struct wlr_xdg_surface *surface);
+	void onNewXDGSurface(struct wlr_xdg_surface *surface);
 
 protected:
 	struct wl_display *wl_display;
@@ -34,5 +34,5 @@ protected:
 	struct wlr_xdg_shell *xdg_shell;
 	NewSurfaceCallbackXDG newSurfaceCallbackXDG;
 
-	std::vector<Surface> surfaces;
+	std::vector<XDGSurface> xdgSurfaces;
 };

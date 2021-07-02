@@ -4,8 +4,12 @@
 
 #include "wayland/wayland.hpp"
 
-extern EGLDisplay egl_display;
-extern EGLContext egl_context;
+typedef struct skg_platform_data_t {
+	void *_egl_display;
+	void *_egl_config;
+	void *_egl_context;
+} skg_platform_data_t;
+extern skg_platform_data_t skg_get_platform_data();
 
 Wayland *wayland;
 
@@ -16,12 +20,13 @@ int main() {
 	sk_settings.app_name = "sk-wlroots demo";
 	sk_settings.flatscreen_width = 1600;
 	sk_settings.flatscreen_height = 900;
+	sk_settings.log_filter = sk::log_diagnostic;
 	if (!sk_init(sk_settings))
 		return 1;
 
-	wayland = new Wayland(egl_display, egl_context, EGL_PLATFORM_GBM_KHR);
+	struct skg_platform_data_t stereokitPlatformData = skg_get_platform_data();
 
-	// wl_signal_add(&compositor.xdg_shell->events.new_surface, &compositor.xdg_shell_new_surface);
+	wayland = new Wayland(stereokitPlatformData._egl_display, stereokitPlatformData._egl_context, EGL_PLATFORM_GBM_MESA);
 
 	while (sk_step([]() {
 		wayland->update();
