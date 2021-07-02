@@ -50,8 +50,8 @@ void Wayland::update() {
 	}
 }
 
-void Wayland::onNewXDGSurface(struct wlr_xdg_surface *surface) {
-	printf("test %s\n", __PRETTY_FUNCTION__);
+void Wayland::onNewXDGSurface(void *data) {
+	struct wlr_xdg_surface *surface = (struct wlr_xdg_surface *) data;
 
     xdgSurfaces.emplace_back(renderer, surface);
 	// if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)

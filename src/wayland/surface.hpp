@@ -10,7 +10,7 @@ public:
     explicit Surface(struct wlr_renderer *renderer, struct wlr_surface *surface);
 	~Surface();
 
-	protected: SurfaceMappedCallbackXDG surfaceMappedCallbackXDG;
+	protected: WaylandCallback surfaceMappedCallbackXDG;
 	public: void onMapped();
 
 	void draw();

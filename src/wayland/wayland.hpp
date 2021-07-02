@@ -21,7 +21,7 @@ public:
 
 	void update();
 
-	void onNewXDGSurface(struct wlr_xdg_surface *surface);
+	void onNewXDGSurface(void *data);
 
 protected:
 	struct wl_display *wl_display;
@@ -32,7 +32,7 @@ protected:
 	struct wlr_compositor *compositor;
 
 	struct wlr_xdg_shell *xdg_shell;
-	NewSurfaceCallbackXDG newSurfaceCallbackXDG;
+	WaylandCallback newSurfaceCallbackXDG;
 
 	std::vector<XDGSurface> xdgSurfaces;
 };
