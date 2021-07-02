@@ -10,12 +10,13 @@ public:
     explicit Surface(wlr_renderer *renderer, wlr_surface *surface);
 	~Surface();
 
-	void onMapped();
 	void onCommit();
-	void draw();
 
 	bool *mapped = nullptr;
 	sk::tex_t surfaceTex;
+	sk::material_t surfaceMat;
+	uint width;
+	uint height;
 
 protected:
 
@@ -26,8 +27,5 @@ protected:
 	wlr_surface *surface;
 
 	bool updateSurface();
-
-	sk::mesh_t surfaceMesh;
-	sk::material_t surfaceMat;
 	sk::shader_t surfaceShader;
 };

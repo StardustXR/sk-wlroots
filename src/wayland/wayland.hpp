@@ -22,6 +22,7 @@ public:
 	void update();
 
 	void onNewXDGSurface(void *data);
+	std::vector<XDGSurface> xdgSurfaces;
 
 protected:
 	wl_display *wayland_display;
@@ -33,6 +34,4 @@ protected:
 
 	wlr_xdg_shell *xdg_shell;
 	WaylandCallback newSurfaceCallbackXDG;
-
-	std::vector<XDGSurface> xdgSurfaces;
 };

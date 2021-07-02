@@ -19,8 +19,6 @@ extern "C" {
 
 #include "sk_internal_defs.hpp"
 
-#define DENSITY 1000.0f
-
 using namespace sk;
 
 Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
@@ -44,39 +42,26 @@ Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
 	material_set_transparency(this->surfaceMat, transparency_blend);
 	material_set_texture(this->surfaceMat, "diffuse", this->surfaceTex);
 
-	this->surfaceMesh = mesh_gen_plane(vec2_one, -vec3_forward, vec3_up);
-
 	surfaceCommitCallback.callback = std::bind(&Surface::onCommit, this);
 	wl_signal_add(&surface->events.commit, &surfaceCommitCallback.listener);
 }
 
 Surface::~Surface() {}
 
-void Surface::onMapped() {
-	wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
-	mesh_release(this->surfaceMesh);
-	this->surfaceMesh = mesh_gen_plane(vec2{((float) surfaceTexture->width)/DENSITY, ((float) surfaceTexture->height)/DENSITY}, -vec3_forward, vec3_up);
-}
-
 void Surface::onCommit() {
 	wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
-	if(!surfaceTexture || !wlr_texture_is_gles2(surfaceTexture)) {
-		printf("Surface texture does not exist or is not GLES2\n");
+	if(!surfaceTexture || !wlr_texture_is_gles2(surfaceTexture))
 		return;
-	}
 	wlr_gles2_texture *eglTexture = (wlr_gles2_texture *) surfaceTexture;
+
+	this->width                       = surfaceTexture->width;
+	this->height                      = surfaceTexture->height;
 
 	this->surfaceTex->tex.width       = surfaceTexture->width;
 	this->surfaceTex->tex.height      = surfaceTexture->height;
 	this->surfaceTex->tex._texture    = eglTexture->tex;
 	this->surfaceTex->tex._target     = eglTexture->target;
 	tex_set_options(this->surfaceTex, tex_sample_point, tex_address_clamp, 1);
-}
-
-void Surface::draw() {
-	if(!*mapped)
-		return;
-	render_add_mesh(this->surfaceMesh, this->surfaceMat, matrix_trs(vec3_forward * 0.5f));
 
 	timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
