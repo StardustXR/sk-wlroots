@@ -58,27 +58,6 @@ void Surface::onMapped() {
 	this->surfaceMesh = mesh_gen_plane(vec2{((float) surfaceTexture->width)/DENSITY, ((float) surfaceTexture->height)/DENSITY}, -vec3_forward, vec3_up);
 }
 
-GLuint tex = 0;
-
-void readWaylandTexture(GLuint tex, GLenum target, GLenum format, uint32_t height, uint32_t width, void **data, size_t *size, GLuint *outTex) {
-	*size = width * height * 4;
-	*data = malloc(*size);
-	memset(*data, uint8_t(127), *size);
-	uint32_t fbo = 0;
-
-	PFNGLFRAMEBUFFERTEXTUREOESPROC glFramebufferTextureOES = (PFNGLFRAMEBUFFERTEXTUREOESPROC) eglGetProcAddress("glFramebufferTextureOES");
-
-	glGenFramebuffers          (1, &fbo);
-	glBindFramebuffer          (GL_FRAMEBUFFER, fbo);
-	(*glFramebufferTextureOES) (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
-	glFramebufferTexture2D     (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-
-	glReadPixels(0, 0, width, height, format, GL_UNSIGNED_BYTE, *data);
-
-	glBindFramebuffer   (GL_FRAMEBUFFER, 0);
-	glDeleteFramebuffers(1, &fbo);
-}
-
 void Surface::onCommit() {
 	struct wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
 	if(!surfaceTexture || !wlr_texture_is_gles2(surfaceTexture)) {
