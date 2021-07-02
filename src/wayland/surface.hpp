@@ -10,20 +10,24 @@ public:
     explicit Surface(struct wlr_renderer *renderer, struct wlr_surface *surface);
 	~Surface();
 
-	protected: WaylandCallback surfaceMappedCallbackXDG;
-	public: void onMapped();
-
+	void onMapped();
+	void onCommit();
 	void draw();
 
+	bool *mapped = nullptr;
+	sk::tex_t surfaceTex;
+
 protected:
+
+	WaylandCallback surfaceMappedCallback;
+	WaylandCallback surfaceCommitCallback;
+
     struct wlr_renderer *renderer;
 	struct wlr_surface *surface;
 
-	bool *mapped = nullptr;
 	bool updateSurface();
 
 	sk::mesh_t surfaceMesh;
 	sk::material_t surfaceMat;
 	sk::shader_t surfaceShader;
-	sk::tex_t surfaceTex;
 };

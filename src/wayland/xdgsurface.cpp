@@ -8,8 +8,8 @@ XDGSurface::XDGSurface(struct wlr_renderer *renderer, struct wlr_xdg_surface *xd
 		printf("New XDG surface created\n");
 
 	mapped = &xdg_surface->mapped;
-	surfaceMappedCallbackXDG.callback = std::bind(&Surface::onMapped, this);
-	wl_signal_add(&xdg_surface->events.map, &surfaceMappedCallbackXDG.listener);
+	surfaceMappedCallback.callback = std::bind(&Surface::onMapped, this);
+	wl_signal_add(&xdg_surface->events.map, &surfaceMappedCallback.listener);
 }
 
 XDGSurface::~XDGSurface() {}

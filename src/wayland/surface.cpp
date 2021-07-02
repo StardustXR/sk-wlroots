@@ -45,6 +45,9 @@ Surface::Surface(struct wlr_renderer *renderer, struct wlr_surface *surface) {
 	material_set_texture(this->surfaceMat, "diffuse", this->surfaceTex);
 
 	this->surfaceMesh = mesh_gen_plane(vec2_one, -vec3_forward, vec3_up);
+
+	surfaceCommitCallback.callback = std::bind(&Surface::onCommit, this);
+	wl_signal_add(&surface->events.commit, &surfaceCommitCallback.listener);
 }
 
 Surface::~Surface() {}
@@ -76,11 +79,11 @@ void readWaylandTexture(GLuint tex, GLenum target, GLenum format, uint32_t heigh
 	glDeleteFramebuffers(1, &fbo);
 }
 
-bool Surface::updateSurface() {
+void Surface::onCommit() {
 	struct wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
 	if(!surfaceTexture || !wlr_texture_is_gles2(surfaceTexture)) {
 		printf("Surface texture does not exist or is not GLES2\n");
-		return false;
+		return;
 	}
 	struct wlr_gles2_texture *eglTexture = (struct wlr_gles2_texture *) surfaceTexture;
 
@@ -89,15 +92,12 @@ bool Surface::updateSurface() {
 	this->surfaceTex->tex._texture    = eglTexture->tex;
 	this->surfaceTex->tex._target     = eglTexture->target;
 	tex_set_options(this->surfaceTex, tex_sample_point, tex_address_clamp, 1);
-
-	return true;
 }
 
 void Surface::draw() {
 	if(!*mapped)
 		return;
-	if(updateSurface())
-		render_add_mesh(this->surfaceMesh, this->surfaceMat, matrix_trs(vec3_forward * 0.5f));
+	render_add_mesh(this->surfaceMesh, this->surfaceMat, matrix_trs(vec3_forward * 0.5f));
 
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
