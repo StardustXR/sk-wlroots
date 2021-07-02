@@ -54,6 +54,6 @@ void Wayland::onNewXDGSurface(void *data) {
 	struct wlr_xdg_surface *surface = (struct wlr_xdg_surface *) data;
 
     xdgSurfaces.emplace_back(renderer, surface);
-	// if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
-		// return;
+	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
+		return;
 }
