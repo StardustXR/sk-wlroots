@@ -1,15 +1,10 @@
-#include "stereokit.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
 #include "wayland/wayland.hpp"
 
-typedef struct skg_platform_data_t {
-	void *_egl_display;
-	void *_egl_config;
-	void *_egl_context;
-} skg_platform_data_t;
-extern skg_platform_data_t skg_get_platform_data();
+#include "stereokit.h"
+#include "sk_internal_defs.hpp"
 
 Wayland *wayland;
 

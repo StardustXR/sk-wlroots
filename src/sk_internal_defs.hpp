@@ -3,8 +3,12 @@
 #include "stereokit.h"
 
 namespace sk {
-	extern void tex_set_surface(tex_t texture, void *native_surface, tex_type_ type, int64_t native_fmt, int32_t width, int32_t height, int32_t surface_count);
-	extern void tex_set_options(tex_t texture, tex_sample_ sample, tex_address_ address_mode, int32_t anisotropy_level);
+
+	typedef struct skg_platform_data_t {
+		void *_egl_display;
+		void *_egl_config;
+		void *_egl_context;
+	} skg_platform_data_t;
 
 	enum asset_type_ {
 		asset_type_mesh = 0,
@@ -80,4 +84,10 @@ namespace sk {
 		skg_tex_t      tex;
 		tex_t          depth_buffer;
 	};
+
+	extern void tex_set_surface(tex_t texture, void *native_surface, tex_type_ type, int64_t native_fmt, int32_t width, int32_t height, int32_t surface_count);
+	extern void tex_set_options(tex_t texture, tex_sample_ sample, tex_address_ address_mode, int32_t anisotropy_level);
+
 }
+
+extern sk::skg_platform_data_t skg_get_platform_data();
