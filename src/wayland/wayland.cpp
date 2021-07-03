@@ -1,13 +1,17 @@
 #include "wayland.hpp"
 #include "callbacks.h"
 #include "assert.h"
+#include "wlr/util/log.h"
 #include <EGL/eglext.h>
+#include <stereokit.h>
 
 extern "C" {
 	#include "wlr/types/wlr_data_device.h"
 }
 
 Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
+	wlr_log_init(WLR_DEBUG, wlr_log_handler);
+
 	wayland_display = wl_display_create();
 	assert(wayland_display);
 	event_loop = wl_display_get_event_loop(wayland_display);
@@ -52,4 +56,23 @@ void Wayland::onNewXDGSurface(void *data) {
     xdgSurfaces.emplace_back(renderer, surface);
 	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
 		return;
+}
+
+void Wayland::wlr_log_handler(wlr_log_importance level, const char *fmt, va_list args) {
+	switch (level) {
+		case WLR_ERROR:
+			sk::log_errf(fmt, args);
+		break;
+
+		case WLR_INFO:
+			sk::log_infof(fmt, args);
+		break;
+
+		case WLR_DEBUG:
+			sk::log_diagf(fmt, args);
+		break;
+
+		default:
+	return;
+	}
 }

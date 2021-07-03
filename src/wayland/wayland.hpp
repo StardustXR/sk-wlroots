@@ -8,6 +8,7 @@ extern "C" {
 #undef static
 #include <wlr/types/wlr_compositor.h>
 #include <wlr/types/wlr_xdg_shell.h>
+#include "wlr/util/log.h"
 }
 #include <vector>
 
@@ -27,6 +28,8 @@ public:
 protected:
 	wl_display *wayland_display;
 	wl_event_loop *event_loop;
+
+	static void wlr_log_handler(wlr_log_importance level, const char *fmt, va_list args);
 
 	wlr_egl *egl;
 	wlr_renderer *renderer;
