@@ -36,7 +36,8 @@ Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
 	this->surfaceTex->tex.array_count = 1;
 
 	// this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit.sks");
-	this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit_gamma.sks");
+	// this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit_gamma.sks");
+	this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit_simula.sks");
 
 	this->surfaceMat = material_create(this->surfaceShader);
 	material_set_transparency(this->surfaceMat, transparency_blend);
@@ -61,7 +62,7 @@ void Surface::onCommit() {
 	this->surfaceTex->tex.height      = surfaceTexture->height;
 	this->surfaceTex->tex._texture    = eglTexture->tex;
 	this->surfaceTex->tex._target     = eglTexture->target;
-	tex_set_options(this->surfaceTex, tex_sample_point, tex_address_clamp, 1);
+	tex_set_options(this->surfaceTex, tex_sample_linear, tex_address_clamp, 1);
 
 	timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
