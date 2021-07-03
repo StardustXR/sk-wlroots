@@ -33,6 +33,22 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 
 	compositor = wlr_compositor_create(wayland_display, renderer);
 	assert(compositor);
+
+	backend = wlr_noop_backend_create(wayland_display);
+	assert(backend);
+	if (!wlr_backend_start(backend)) {
+		fprintf(stderr, "Failed to start backend\n");
+		wl_display_destroy(wayland_display);
+		exit(1);
+	}
+
+	output = wlr_noop_add_output(backend);
+	assert(output);
+	output_layout = wlr_output_layout_create();
+	wlr_output_layout_add(output_layout, output, 0, 0);
+	wlr_output_set_scale(output, 2.0f);
+	wlr_output_commit(output);
+
 	// wlr_data_device_manager_create(display);
 	xdg_shell = wlr_xdg_shell_create(wayland_display);
 	assert(xdg_shell);

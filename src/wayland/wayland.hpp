@@ -6,8 +6,11 @@ extern "C" {
 #define static
 #include "wlr/render/gles2.h"
 #undef static
-#include <wlr/types/wlr_compositor.h>
-#include <wlr/types/wlr_xdg_shell.h>
+#include "wlr/backend/noop.h"
+#include "wlr/types/wlr_compositor.h"
+#include "wlr/types/wlr_output.h"
+#include "wlr/types/wlr_output_layout.h"
+#include "wlr/types/wlr_xdg_shell.h"
 #include "wlr/util/log.h"
 }
 #include <vector>
@@ -34,6 +37,9 @@ protected:
 	wlr_egl *egl;
 	wlr_renderer *renderer;
 	wlr_compositor *compositor;
+	wlr_backend *backend;
+	wlr_output *output;
+	wlr_output_layout *output_layout;
 
 	wlr_xdg_shell *xdg_shell;
 	WaylandCallback newSurfaceCallbackXDG;
