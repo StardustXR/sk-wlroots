@@ -1,13 +1,9 @@
 #pragma once
 
 #include <functional>
-#include <stdint.h>
 #include <wayland-server-core.h>
 
 extern "C" {
-
-#include <wlr/types/wlr_xdg_shell.h>
-
 
 typedef std::function<void(void *)> WaylandCallbackMethod;
 struct WaylandCallback {
