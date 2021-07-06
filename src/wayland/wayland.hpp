@@ -1,22 +1,19 @@
 #pragma once
 
-#include <wayland-server.h>
-extern "C" {
-#include "wlr/render/egl.h"
-#define static
-#include "wlr/render/gles2.h"
-#undef static
-#include "wlr/backend/noop.h"
-#include "wlr/types/wlr_compositor.h"
-#include "wlr/types/wlr_output.h"
-#include "wlr/types/wlr_output_layout.h"
-#include "wlr/types/wlr_xdg_shell.h"
-#include "wlr/util/log.h"
-}
 #include <vector>
+
+#include <EGL/egl.h>
+#include <wayland-server.h>
 
 #include "callbacks.h"
 #include "xdgsurface.hpp"
+
+struct wlr_egl;
+struct wlr_compositor;
+struct wlr_backend;
+struct wlr_output;
+struct wlr_output_layout;
+struct wlr_xdg_shell;
 
 class Wayland {
 public:
@@ -31,8 +28,6 @@ public:
 protected:
 	wl_display *wayland_display;
 	wl_event_loop *event_loop;
-
-	static void wlr_log_handler(wlr_log_importance level, const char *fmt, va_list args);
 
 	wlr_egl *egl;
 	wlr_renderer *renderer;

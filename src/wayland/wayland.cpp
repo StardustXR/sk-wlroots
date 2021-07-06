@@ -1,12 +1,44 @@
-#include "wayland.hpp"
-#include "callbacks.h"
 #include "assert.h"
-#include "wlr/util/log.h"
-#include <EGL/eglext.h>
 #include <stereokit.h>
 
+#include "callbacks.h"
+#include "wayland.hpp"
+
 extern "C" {
-	#include "wlr/types/wlr_data_device.h"
+
+#include "wlr/render/egl.h"
+
+#define static
+#include "wlr/render/gles2.h"
+#undef static
+
+#include "wlr/backend/noop.h"
+#include "wlr/types/wlr_compositor.h"
+#include "wlr/types/wlr_data_device.h"
+#include "wlr/types/wlr_output.h"
+#include "wlr/types/wlr_output_layout.h"
+#include "wlr/types/wlr_xdg_shell.h"
+#include "wlr/util/log.h"
+
+}
+
+static void wlr_log_handler(wlr_log_importance level, const char *fmt, va_list args) {
+	switch (level) {
+		case WLR_ERROR:
+			sk::log_errf(fmt, args);
+		break;
+
+		case WLR_INFO:
+			sk::log_infof(fmt, args);
+		break;
+
+		case WLR_DEBUG:
+			sk::log_diagf(fmt, args);
+		break;
+
+		default:
+	return;
+	}
 }
 
 Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
@@ -57,9 +89,7 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 	wl_signal_add(&xdg_shell->events.new_surface, &newSurfaceCallbackXDG.listener);
 }
 
-Wayland::~Wayland() {
-
-}
+Wayland::~Wayland() {}
 
 void Wayland::update() {
 	wl_display_flush_clients(wayland_display);
@@ -72,23 +102,4 @@ void Wayland::onNewXDGSurface(void *data) {
     xdgSurfaces.emplace_back(renderer, surface);
 	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
 		return;
-}
-
-void Wayland::wlr_log_handler(wlr_log_importance level, const char *fmt, va_list args) {
-	switch (level) {
-		case WLR_ERROR:
-			sk::log_errf(fmt, args);
-		break;
-
-		case WLR_INFO:
-			sk::log_infof(fmt, args);
-		break;
-
-		case WLR_DEBUG:
-			sk::log_diagf(fmt, args);
-		break;
-
-		default:
-	return;
-	}
 }

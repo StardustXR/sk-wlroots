@@ -1,8 +1,6 @@
 #pragma once
 
 #include "surface.hpp"
-#include "types/wlr_xdg_shell.h"
-#include "callbacks.h"
 
 class XDGSurface : public Surface {
 public:

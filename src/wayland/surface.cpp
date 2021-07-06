@@ -1,23 +1,18 @@
-#include "surface.hpp"
-
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-
 #include <assert.h>
-#include <cstddef>
-#include <cstring>
-#include <stdio.h>
+
 #include <stereokit.h>
+#include "sk_internal_defs.hpp"
+
+#include "surface.hpp"
 
 extern "C" {
 #include "render/egl.h"
 #define static
 #include "render/gles2.h"
 #undef static
+#include "wlr/types/wlr_surface.h"
 #include "types/wlr_xdg_shell.h"
 }
-
-#include "sk_internal_defs.hpp"
 
 #include "../shaders/shader_unlit_gamma.sks.h"
 #include "../shaders/shader_unlit_simula.sks.h"

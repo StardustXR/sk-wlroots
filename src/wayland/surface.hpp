@@ -1,9 +1,9 @@
 #pragma once
-extern "C" {
-#include "wlr/types/wlr_surface.h"
-}
 #include "callbacks.h"
 #include <stereokit.h>
+
+struct wlr_renderer;
+struct wlr_surface;
 
 class Surface {
 public:
@@ -20,7 +20,6 @@ public:
 
 protected:
 
-	WaylandCallback surfaceMappedCallback;
 	WaylandCallback surfaceCommitCallback;
 
     wlr_renderer *renderer;
