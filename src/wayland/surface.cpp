@@ -19,6 +19,9 @@ extern "C" {
 
 #include "sk_internal_defs.hpp"
 
+#include "../shaders/shader_unlit_gamma.sks.h"
+#include "../shaders/shader_unlit_simula.sks.h"
+
 using namespace sk;
 
 Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
@@ -35,9 +38,8 @@ Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
 	this->surfaceTex->tex.format      = skg_tex_fmt_rgba32;
 	this->surfaceTex->tex.array_count = 1;
 
-	// this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit.sks");
-	// this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit_gamma.sks");
-	this->surfaceShader = shader_create_file("/run/media/nova/MEDIA/xr/stardust/sk-wlroots/src/shaders/shader_unlit_simula.sks");
+	// this->surfaceShader = shader_create_mem((void *) shader_unlit_gamma_sks, shader_unlit_gamma_sks_size);
+	this->surfaceShader = shader_create_mem((void *) shader_unlit_simula_sks, shader_unlit_simula_sks_size);
 
 	this->surfaceMat = material_create(this->surfaceShader);
 	material_set_transparency(this->surfaceMat, transparency_blend);
