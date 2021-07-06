@@ -18,20 +18,37 @@ server_protocols = [
 src_includes = include_directories('src')
 includes = [src_includes]
 
-source_files = files('src/main.cpp')
-
+lib_files = [server_protocols]
 subdir('src')
 
-source_files += server_protocols
 
-executable(
+lib_sk_wlroots = library(
 	'sk-wlroots',
-	source_files,
+	lib_files,
 	include_directories: includes,
 	dependencies: [
 		stereokit,
 # After here are all the internal dependencies
-		# wayland,
 		wlroots,
+	],
+	version: '0.1.0',
+	soversion: '0',
+)
+
+sk_wlroots = declare_dependency(
+	include_directories: includes,
+	link_with: lib_sk_wlroots,
+	dependencies: [
+		wlroots,
+	],
+)
+
+executable(
+	'sk-wlroots',
+	'src/main.cpp',
+	include_directories: includes,
+	dependencies: [
+		stereokit,
+		sk_wlroots
 	],
 )
