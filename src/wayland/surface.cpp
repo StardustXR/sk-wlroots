@@ -44,7 +44,11 @@ Surface::Surface(wlr_renderer *renderer, wlr_surface *surface) {
 	wl_signal_add(&surface->events.commit, &surfaceCommitCallback.listener);
 }
 
-Surface::~Surface() {}
+Surface::~Surface() {
+	tex_release(surfaceTex);
+	shader_release(surfaceShader);
+	material_release(surfaceMat);
+}
 
 void Surface::onCommit() {
 	wlr_texture *surfaceTexture = wlr_surface_get_texture(surface);
