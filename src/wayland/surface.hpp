@@ -17,13 +17,13 @@ public:
 	sk::material_t surfaceMat;
 	uint width;
 	uint height;
+	wlr_surface *surface;
 
 protected:
 
 	WaylandCallback surfaceCommitCallback;
 
     wlr_renderer *renderer;
-	wlr_surface *surface;
 
 	bool updateSurface();
 	sk::shader_t surfaceShader;

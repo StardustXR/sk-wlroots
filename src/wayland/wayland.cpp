@@ -87,6 +87,8 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 
 	newSurfaceCallbackXDG.callback = std::bind(&Wayland::onNewXDGSurface, this, std::placeholders::_1);
 	wl_signal_add(&xdg_shell->events.new_surface, &newSurfaceCallbackXDG.listener);
+
+	destroySurfaceCallbackXDG.callback = std::bind(&Wayland::onDestroyXDGSurface, this, std::placeholders::_1);
 }
 
 Wayland::~Wayland() {}
@@ -98,6 +100,7 @@ void Wayland::update() {
 
 void Wayland::onNewXDGSurface(void *data) {
 	wlr_xdg_surface *surface = (wlr_xdg_surface *) data;
+	wl_signal_add(&surface->events.destroy, &destroySurfaceCallbackXDG.listener);
 
 	XDGSurface *newSurface = new XDGSurface(renderer, surface);
 
@@ -105,4 +108,21 @@ void Wayland::onNewXDGSurface(void *data) {
 	surfaces.push_back(newSurface);
 	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
 		return;
+}
+
+void Wayland::onDestroyXDGSurface(void *data) {
+	wlr_xdg_surface *xdg_surface = (wlr_xdg_surface *) data;
+
+	for(auto xdgSurfaceIterator = std::begin(xdgSurfaces); xdgSurfaceIterator != std::end(xdgSurfaces); ++xdgSurfaceIterator) {
+		if((*xdgSurfaceIterator.base())->xdg_surface == xdg_surface) {
+			xdgSurfaces.erase(xdgSurfaceIterator);
+
+			for(auto surfaceIterator = std::begin(surfaces); surfaceIterator != std::end(surfaces); ++surfaceIterator) {
+				if((*surfaceIterator.base())->surface == xdg_surface->surface) {
+					surfaces.erase(surfaceIterator);
+					return;
+				}
+			}
+		}
+	}
 }

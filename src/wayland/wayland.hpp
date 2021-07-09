@@ -23,6 +23,7 @@ public:
 	void update();
 
 	void onNewXDGSurface(void *data);
+	void onDestroyXDGSurface(void *data);
 	std::vector<XDGSurface *> xdgSurfaces;
 
 	std::vector<Surface *> surfaces;
@@ -40,4 +41,5 @@ protected:
 
 	wlr_xdg_shell *xdg_shell;
 	WaylandCallback newSurfaceCallbackXDG;
+	WaylandCallback destroySurfaceCallbackXDG;
 };
