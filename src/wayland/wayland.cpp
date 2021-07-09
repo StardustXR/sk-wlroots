@@ -99,7 +99,10 @@ void Wayland::update() {
 void Wayland::onNewXDGSurface(void *data) {
 	wlr_xdg_surface *surface = (wlr_xdg_surface *) data;
 
-    xdgSurfaces.push_back(new XDGSurface(renderer, surface));
+	XDGSurface *newSurface = new XDGSurface(renderer, surface);
+
+    xdgSurfaces.push_back(newSurface);
+	surfaces.push_back(newSurface);
 	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
 		return;
 }

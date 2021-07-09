@@ -25,6 +25,8 @@ public:
 	void onNewXDGSurface(void *data);
 	std::vector<XDGSurface *> xdgSurfaces;
 
+	std::vector<Surface *> surfaces;
+
 protected:
 	wl_display *wayland_display;
 	wl_event_loop *event_loop;
