@@ -23,7 +23,7 @@ public:
 	void update();
 
 	void onNewXDGSurface(void *data);
-	std::vector<XDGSurface> xdgSurfaces;
+	std::vector<XDGSurface *> xdgSurfaces;
 
 protected:
 	wl_display *wayland_display;
