@@ -1,4 +1,5 @@
 #include "assert.h"
+#include <algorithm>
 #include <stereokit.h>
 
 #include "callbacks.h"
@@ -104,6 +105,17 @@ void Wayland::update() {
 	wl_event_loop_dispatch(event_loop, 1);
 }
 
+void Wayland::destroyXWaylandSurface(wlr_surface *surface) {
+	surfaces.erase(std::remove_if(
+		surfaces.begin(),
+		surfaces.end(),
+		[surface](Surface *listSurface) {
+			return listSurface->surface == surface;
+		}),
+		surfaces.end()
+	);
+}
+
 void Wayland::onNewXDGSurface(void *data) {
 	wlr_xdg_surface *surface = (wlr_xdg_surface *) data;
 	wl_signal_add(&surface->events.destroy, &destroySurfaceCallbackXDG.listener);
@@ -117,18 +129,15 @@ void Wayland::onNewXDGSurface(void *data) {
 void Wayland::onDestroyXDGSurface(void *data) {
 	wlr_xdg_surface *xdg_surface = (wlr_xdg_surface *) data;
 
-	for(auto xdgSurfaceIterator = std::begin(xdgSurfaces); xdgSurfaceIterator != std::end(xdgSurfaces); ++xdgSurfaceIterator) {
-		if((*xdgSurfaceIterator.base())->xdg_surface == xdg_surface) {
-			xdgSurfaces.erase(xdgSurfaceIterator);
-
-			for(auto surfaceIterator = std::begin(surfaces); surfaceIterator != std::end(surfaces); ++surfaceIterator) {
-				if((*surfaceIterator.base())->surface == xdg_surface->surface) {
-					surfaces.erase(surfaceIterator);
-					return;
-				}
-			}
-		}
-	}
+	xdgSurfaces.erase(std::remove_if(
+		xdgSurfaces.begin(),
+		xdgSurfaces.end(),
+		[xdg_surface](XDGSurface *surface) {
+			return surface->xdg_surface == xdg_surface;
+		}),
+		xdgSurfaces.end()
+	);
+	destroyXWaylandSurface(xdg_surface->surface);
 }
 
 void Wayland::onNewXWaylandSurface(void *data) {
@@ -141,23 +150,20 @@ void Wayland::onMapXWaylandSurface(void *data) {
 	wlr_xwayland_surface *surface = (wlr_xwayland_surface *) data;
 	XWaylandSurface *newSurface = new XWaylandSurface(renderer, surface);
 
-    xWaylandSurfaces.push_back(newSurface);
+	xWaylandSurfaces.push_back(newSurface);
 	surfaces.push_back(newSurface);
 }
 
 void Wayland::onDestroyXWaylandSurface(void *data) {
 	wlr_xwayland_surface *xwayland_surface = (wlr_xwayland_surface *) data;
 
-	for(auto xWaylandSurfaceIterator = std::begin(xWaylandSurfaces); xWaylandSurfaceIterator != std::end(xWaylandSurfaces); ++xWaylandSurfaceIterator) {
-		if((*xWaylandSurfaceIterator.base())->xwayland_surface == xwayland_surface) {
-			xWaylandSurfaces.erase(xWaylandSurfaceIterator);
-
-			for(auto surfaceIterator = std::begin(surfaces); surfaceIterator != std::end(surfaces); ++surfaceIterator) {
-				if((*surfaceIterator.base())->surface == xwayland_surface->surface) {
-					surfaces.erase(surfaceIterator);
-					return;
-				}
-			}
-		}
-	}
+	xWaylandSurfaces.erase(std::remove_if(
+		xWaylandSurfaces.begin(),
+		xWaylandSurfaces.end(),
+		[xwayland_surface](XWaylandSurface *surface) {
+			return surface->xwayland_surface == xwayland_surface;
+		}),
+		xWaylandSurfaces.end()
+	);
+	destroyXWaylandSurface(xwayland_surface->surface);
 }

@@ -33,6 +33,7 @@ public:
 	void onDestroyXWaylandSurface(void *data);
 	std::vector<XWaylandSurface *> xWaylandSurfaces;
 
+	void destroyXWaylandSurface(wlr_surface *surface);
 	std::vector<Surface *> surfaces;
 
 protected:
