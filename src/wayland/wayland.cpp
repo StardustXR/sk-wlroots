@@ -6,18 +6,19 @@
 
 extern "C" {
 
-#include "wlr/render/egl.h"
-
 #define static
+#include "wlr/types/wlr_compositor.h"
 #include "wlr/render/gles2.h"
+#include "wlr/render/egl.h"
+#include "wlr/backend/noop.h"
 #undef static
 
-#include "wlr/backend/noop.h"
-#include "wlr/types/wlr_compositor.h"
 #include "wlr/types/wlr_data_device.h"
 #include "wlr/types/wlr_output.h"
 #include "wlr/types/wlr_output_layout.h"
 #include "wlr/types/wlr_xdg_shell.h"
+#include "xwaylandinclude.h"
+
 #include "wlr/util/log.h"
 
 }
@@ -84,11 +85,16 @@ Wayland::Wayland(EGLDisplay display, EGLContext context, EGLenum platform) {
 	// wlr_data_device_manager_create(display);
 	xdg_shell = wlr_xdg_shell_create(wayland_display);
 	assert(xdg_shell);
-
 	newSurfaceCallbackXDG.callback = std::bind(&Wayland::onNewXDGSurface, this, std::placeholders::_1);
 	wl_signal_add(&xdg_shell->events.new_surface, &newSurfaceCallbackXDG.listener);
-
 	destroySurfaceCallbackXDG.callback = std::bind(&Wayland::onDestroyXDGSurface, this, std::placeholders::_1);
+
+	xwayland = wlr_xwayland_create(wayland_display, compositor, false);
+	assert(xwayland);
+	newSurfaceCallbackXWayland.callback = std::bind(&Wayland::onNewXWaylandSurface, this, std::placeholders::_1);
+	wl_signal_add(&xwayland->events.new_surface, &newSurfaceCallbackXWayland.listener);
+	mapSurfaceCallbackXWayland.callback = std::bind(&Wayland::onMapXWaylandSurface, this, std::placeholders::_1);
+	destroySurfaceCallbackXWayland.callback = std::bind(&Wayland::onDestroyXWaylandSurface, this, std::placeholders::_1);
 }
 
 Wayland::~Wayland() {}
@@ -106,8 +112,6 @@ void Wayland::onNewXDGSurface(void *data) {
 
     xdgSurfaces.push_back(newSurface);
 	surfaces.push_back(newSurface);
-	if (surface->role != WLR_XDG_SURFACE_ROLE_TOPLEVEL)
-		return;
 }
 
 void Wayland::onDestroyXDGSurface(void *data) {
@@ -119,6 +123,37 @@ void Wayland::onDestroyXDGSurface(void *data) {
 
 			for(auto surfaceIterator = std::begin(surfaces); surfaceIterator != std::end(surfaces); ++surfaceIterator) {
 				if((*surfaceIterator.base())->surface == xdg_surface->surface) {
+					surfaces.erase(surfaceIterator);
+					return;
+				}
+			}
+		}
+	}
+}
+
+void Wayland::onNewXWaylandSurface(void *data) {
+	wlr_xwayland_surface *surface = (wlr_xwayland_surface *) data;
+	wl_signal_add(&surface->events.map, &mapSurfaceCallbackXWayland.listener);
+	wl_signal_add(&surface->events.destroy, &destroySurfaceCallbackXWayland.listener);
+}
+
+void Wayland::onMapXWaylandSurface(void *data) {
+	wlr_xwayland_surface *surface = (wlr_xwayland_surface *) data;
+	XWaylandSurface *newSurface = new XWaylandSurface(renderer, surface);
+
+    xWaylandSurfaces.push_back(newSurface);
+	surfaces.push_back(newSurface);
+}
+
+void Wayland::onDestroyXWaylandSurface(void *data) {
+	wlr_xwayland_surface *xwayland_surface = (wlr_xwayland_surface *) data;
+
+	for(auto xWaylandSurfaceIterator = std::begin(xWaylandSurfaces); xWaylandSurfaceIterator != std::end(xWaylandSurfaces); ++xWaylandSurfaceIterator) {
+		if((*xWaylandSurfaceIterator.base())->xwayland_surface == xwayland_surface) {
+			xWaylandSurfaces.erase(xWaylandSurfaceIterator);
+
+			for(auto surfaceIterator = std::begin(surfaces); surfaceIterator != std::end(surfaces); ++surfaceIterator) {
+				if((*surfaceIterator.base())->surface == xwayland_surface->surface) {
 					surfaces.erase(surfaceIterator);
 					return;
 				}

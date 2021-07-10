@@ -1,5 +1,3 @@
-#include <wayland-server-core.h>
-
 #include "xdgsurface.hpp"
 
 extern "C" {

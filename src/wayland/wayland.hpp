@@ -7,6 +7,7 @@
 
 #include "callbacks.h"
 #include "xdgsurface.hpp"
+#include "xwaylandsurface.hpp"
 
 struct wlr_egl;
 struct wlr_compositor;
@@ -14,6 +15,7 @@ struct wlr_backend;
 struct wlr_output;
 struct wlr_output_layout;
 struct wlr_xdg_shell;
+struct wlr_xwayland;
 
 class Wayland {
 public:
@@ -25,6 +27,11 @@ public:
 	void onNewXDGSurface(void *data);
 	void onDestroyXDGSurface(void *data);
 	std::vector<XDGSurface *> xdgSurfaces;
+
+	void onNewXWaylandSurface(void *data);
+	void onMapXWaylandSurface(void *data);
+	void onDestroyXWaylandSurface(void *data);
+	std::vector<XWaylandSurface *> xWaylandSurfaces;
 
 	std::vector<Surface *> surfaces;
 
@@ -42,4 +49,9 @@ protected:
 	wlr_xdg_shell *xdg_shell;
 	WaylandCallback newSurfaceCallbackXDG;
 	WaylandCallback destroySurfaceCallbackXDG;
+
+	wlr_xwayland *xwayland;
+	WaylandCallback newSurfaceCallbackXWayland;
+	WaylandCallback mapSurfaceCallbackXWayland;
+	WaylandCallback destroySurfaceCallbackXWayland;
 };
