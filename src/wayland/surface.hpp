@@ -8,11 +8,11 @@ struct wlr_surface;
 class Surface {
 public:
     explicit Surface(wlr_renderer *renderer, wlr_surface *surface);
-	~Surface();
+	virtual ~Surface();
 
 	void onCommit();
 
-	bool *mapped = nullptr;
+	virtual bool isMapped() const = 0;
 	sk::tex_t surfaceTex;
 	sk::material_t surfaceMat;
 	uint width;

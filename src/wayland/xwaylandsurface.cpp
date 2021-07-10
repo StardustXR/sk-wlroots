@@ -10,11 +10,13 @@ XWaylandSurface::XWaylandSurface(wlr_renderer *renderer, wlr_xwayland_surface *x
 	if(wlr_surface_is_xwayland_surface(surface))
 		printf("New XWayland surface created\n");
 
-	mapped = &xwayland_surface->mapped;
-
 	wlr_xwayland_surface_activate(xwayland_surface, true);
 	// wlr_xwayland_surface_set_fullscreen(xwayland_surface, true);
 	wlr_xwayland_surface_set_maximized(xwayland_surface, true);
 }
 
 XWaylandSurface::~XWaylandSurface() {}
+
+bool XWaylandSurface::isMapped() const {
+	return xwayland_surface && xwayland_surface->mapped;
+}

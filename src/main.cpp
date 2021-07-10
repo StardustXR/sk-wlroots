@@ -32,7 +32,7 @@ int main() {
 	while (sk_step([]() {
 		wayland->update();
 		for(Surface *surface : wayland->surfaces) {
-			if(*surface->mapped) {
+			if(surface->isMapped()) {
 				ui_window_begin("Wayland Panel", pose, vec2{surface->width/DENSITY, surface->height/DENSITY}, sk::ui_win_head);
 				render_add_mesh(planeMesh, surface->surfaceMat, matrix_trs(-vec3_up * surface->height/DENSITY / 2, quat_from_angles(0.0f, 180.0f, 0.0f), vec3{surface->width/DENSITY, surface->height/DENSITY, 1}));
 				ui_window_end();

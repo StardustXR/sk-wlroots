@@ -10,11 +10,13 @@ XDGSurface::XDGSurface(wlr_renderer *renderer, wlr_xdg_surface *xdg_surface) : S
 	if(wlr_surface_is_xdg_surface(surface))
 		printf("New XDG surface created\n");
 
-	mapped = &xdg_surface->mapped;
-
 	wlr_xdg_toplevel_set_activated(xdg_surface, true);
 	// wlr_xdg_toplevel_set_fullscreen(xdg_surface, true);
 	wlr_xdg_toplevel_set_maximized(xdg_surface, true);
 }
 
 XDGSurface::~XDGSurface() {}
+
+bool XDGSurface::isMapped() const {
+	return xdg_surface && xdg_surface->mapped;
+}

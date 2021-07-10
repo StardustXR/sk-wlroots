@@ -8,4 +8,5 @@ public:
 	~XDGSurface();
 
 	struct wlr_xdg_surface *xdg_surface;
+	bool isMapped() const override;
 };

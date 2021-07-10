@@ -8,4 +8,5 @@ public:
 	~XWaylandSurface();
 
 	struct wlr_xwayland_surface *xwayland_surface;
+	bool isMapped() const override;
 };
