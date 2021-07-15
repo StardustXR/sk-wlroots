@@ -58,6 +58,7 @@ void Surface::onCommit() {
 
 	this->width                       = surfaceTexture->width;
 	this->height                      = surfaceTexture->height;
+	this->density                     = surface->current.scale;
 
 	this->surfaceTex->tex.width       = surfaceTexture->width;
 	this->surfaceTex->tex.height      = surfaceTexture->height;

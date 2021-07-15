@@ -11,7 +11,7 @@ Wayland *wayland;
 
 using namespace sk;
 
-#define DENSITY 2000.0f
+#define DENSITY 1000.0f
 mesh_t planeMesh;
 pose_t pose = pose_t{vec3_forward * 0.5f, quat_from_angles(0, 180, 0)};
 
@@ -33,8 +33,10 @@ int main() {
 		wayland->update();
 		for(Surface *surface : wayland->surfaces) {
 			if(surface->isMapped()) {
-				ui_window_begin("Wayland Panel", pose, vec2{surface->width/DENSITY, surface->height/DENSITY}, sk::ui_win_head);
-				render_add_mesh(planeMesh, surface->surfaceMat, matrix_trs(-vec3_up * surface->height/DENSITY / 2, quat_from_angles(0.0f, 180.0f, 0.0f), vec3{surface->width/DENSITY, surface->height/DENSITY, 1}));
+				vec2 dimensions = vec2{(float) surface->width, (float) surface->height};
+				dimensions /= DENSITY * surface->density;
+				ui_window_begin("Wayland Panel", pose, dimensions, sk::ui_win_head);
+				render_add_mesh(planeMesh, surface->surfaceMat, matrix_trs(-vec3_up * dimensions.y / 2, quat_from_angles(0.0f, 180.0f, 0.0f), vec3{dimensions.x, dimensions.y, 1}));
 				ui_window_end();
 			}
 		}

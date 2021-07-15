@@ -17,6 +17,7 @@ public:
 	sk::material_t surfaceMat;
 	uint width;
 	uint height;
+	uint density;
 	wlr_surface *surface;
 
 protected:
