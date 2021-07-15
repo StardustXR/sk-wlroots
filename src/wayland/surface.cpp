@@ -64,7 +64,7 @@ void Surface::onCommit() {
 	this->surfaceTex->tex.height      = surfaceTexture->height;
 	this->surfaceTex->tex._texture    = eglTexture->tex;
 	this->surfaceTex->tex._target     = eglTexture->target;
-	tex_set_options(this->surfaceTex, tex_sample_linear, tex_address_clamp, 1);
+	tex_set_options(this->surfaceTex, sk::tex_sample_point, tex_address_clamp, 1);
 
 	timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
